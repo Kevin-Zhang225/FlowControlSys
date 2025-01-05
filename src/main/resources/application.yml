@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+spring:
+  redis:
+    host: localhost
+
+ratelimit:
+  defaultThreshold: 1000
