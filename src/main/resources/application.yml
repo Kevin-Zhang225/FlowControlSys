@@ -4,6 +4,21 @@ server:
 spring:
   redis:
     host: localhost
+    
+limit-config:
+  groups:
+    # groupA 包含哪些 API
+    groupA:
+      apis:
+        - "/api/getData"
+        - "/api/postData"
+        - "/api/putData"
 
-ratelimit:
-  defaultThreshold: 1000
+  # thresholds: 针对每个user，定义他在每个group下的阈值
+  thresholds:
+    user1:
+      groupA: 1000
+    user2:
+      groupA: 5000
+    user3:
+      groupA: 10000

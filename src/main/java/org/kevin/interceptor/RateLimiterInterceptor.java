@@ -24,8 +24,7 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
         if (overLimit) {
             // 超限，返回友好提示
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.getWriter().write("访问频率过高，请稍后再试");
-            System.out.println("访问频率过高，请稍后再试");
+            response.getWriter().write("Please retry one minute later");
             return false; // 拦截请求
         }
 
