@@ -1,4 +1,4 @@
-# Rate Limiter Project
+# User Flow Control System
 
 ## 项目简介
 这是一个基于 Spring Boot 的限流器项目，用于限制用户对 API 的访问频率。
