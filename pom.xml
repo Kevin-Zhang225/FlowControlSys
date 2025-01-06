@@ -38,6 +38,28 @@
       <artifactId>spring-boot-starter-data-redis</artifactId>
       <version>${spring.boot.version}</version>
     </dependency>
+
+    <!-- Kafka 客户端 -->
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+      <version>2.8.0</version>
+    </dependency>
+
+    <!-- Kafka Streams -->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-streams</artifactId>
+      <version>3.3.1</version>
+    </dependency>
+
+    <!-- JSON 处理（用于序列化/反序列化） -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.18.2</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
