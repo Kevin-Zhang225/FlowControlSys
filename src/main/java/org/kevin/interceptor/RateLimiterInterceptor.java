@@ -10,9 +10,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.logging.Logger;
 
 @Component
 public class RateLimiterInterceptor implements HandlerInterceptor {
+    private static final Logger logger = Logger.getLogger(RateLimiterInterceptor.class.toString());
     @Autowired
     private RateLimitService rateLimitService;
 
@@ -29,6 +31,7 @@ public class RateLimiterInterceptor implements HandlerInterceptor {
             // 超限，返回友好提示
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.getWriter().write("Please retry one minute later");
+            logger.severe("Please retry one minute later");
             return false; // 拦截请求
         }
 

@@ -1,7 +1,10 @@
 package org.kevin;
 
 import org.apache.kafka.common.protocol.types.Field;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,25 +13,32 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class RateLimiterTest {
+    private static final Logger logger = Logger.getLogger(RateLimiterTest.class.getName());
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
 
     private final String[] apis = {"/api/getData", "/api/postData", "/api/putData"};
     private final String baseUrl = "http://localhost:8080";
@@ -36,16 +46,14 @@ public class RateLimiterTest {
     @Test
     public void testHighConcurrencyForUser() throws InterruptedException, ExecutionException {
         int threadCount = 100; // 并发线程数
-        int loopPerThread = 6; // 每个线程发 50次请求
+        int loopPerThread = 10; // 每个线程发 50次请求
         String userId = "user1";// user 1, 2, 3, 4
 
         highConcurrencyExecute(threadCount, loopPerThread, userId);
 
-//        Thread.sleep(10000); // 模拟等待 Kafka Streams 将分钟统计结果写回redis
+        Thread.sleep(20000); // 模拟等待 Kafka Streams 将分钟统计结果写回redis
 
-//        highConcurrencyExecute(threadCount, loopPerThread, userId);
-        // todo: restart here
-        // 客户端可以成功地向主题发送消息，但是 Kafaka Streams似乎并没有订阅到主题并消费消息，
+        highConcurrencyExecute(threadCount, loopPerThread, userId);
 
         // 简单断言：程序能运行到此，代表所有请求已发完
         Assertions.assertTrue(true);
@@ -88,7 +96,7 @@ public class RateLimiterTest {
                     int statusCode = response.getStatusCodeValue();
                     // 如果超限, 应该返回429
                     if (statusCode != 200 && statusCode != 429) {
-                        System.out.println("Unexpected StatusCode: " + statusCode);
+                       logger.severe("Unexpected StatusCode: " + statusCode);
                     }
                 }
 

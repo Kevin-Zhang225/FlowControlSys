@@ -6,7 +6,9 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
+import org.kevin.interceptor.RateLimiterInterceptor;
 import org.kevin.kafka.ApiRequestProducer;
+import org.kevin.service.RateLimitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +20,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 @Configuration
 @EnableKafkaStreams
 public class RateLimiterStreams {
+    private static final Logger logger = Logger.getLogger(RateLimiterStreams.class.toString());
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
@@ -29,18 +33,13 @@ public class RateLimiterStreams {
     public RateLimiterStreams(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = new ObjectMapper();
-        System.out.println("RateLimiterStreams bean created");
     }
 
     @Bean
     public KStream<String, String> kStream(StreamsBuilder builder) {
-        System.out.println("kStream start execut");
         KStream<String, String> stream = builder.stream("api_requests", Consumed.with(Serdes.String(), Serdes.String()));
-        System.out.println("Stream created for topic api_requests");
-
         stream.mapValues(value -> {
                     try {
-                        System.out.println("Processing value: " + value);
                         return objectMapper.readValue(value, ApiRequestProducer.ApiRequestEvent.class);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -63,8 +62,9 @@ public class RateLimiterStreams {
                 .foreach((windowedKey, count) -> {
                     // 将聚合结果写回 redis
                     String redisKey = windowedKey.key();
-                    System.out.println("windowedKey.key() = " + windowedKey.key());
+                    logger.info("windowedKey.key() = " + windowedKey.key());
                     redisTemplate.opsForValue().set(redisKey, count.toString());
+                    logger.info("write rediskey, key = " + redisKey + ", count = " + count.toString());
                     // 设置过期时间，确保键在1分钟后过期
                     redisTemplate.expire(redisKey, 1, TimeUnit.MINUTES);
                 });

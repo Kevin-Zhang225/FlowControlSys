@@ -13,3 +13,5 @@
 - Open JDK 22
 - Spring Boot 2.7.5
 - Redis
+- Kafka (Run in local docker container)
+- Kafka Stream (Integrate with Springboot App)
