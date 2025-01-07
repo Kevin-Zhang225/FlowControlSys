@@ -1,13 +1,17 @@
 package org.kevin;
 
+import org.apache.kafka.common.protocol.types.Field;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -23,12 +27,15 @@ public class RateLimiterTest {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     private final String[] apis = {"/api/getData", "/api/postData", "/api/putData"};
     private final String baseUrl = "http://localhost:8080";
 
     @Test
     public void testHighConcurrencyForUser() throws InterruptedException, ExecutionException {
-        int threadCount = 100; // 并发线程数
+        int threadCount = 1000; // 并发线程数
         int loopPerThread = 5; // 每个线程发 50次请求
         String userId = "user1";// user 1, 2, 3, 4
 

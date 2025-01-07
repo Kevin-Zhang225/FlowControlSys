@@ -13,6 +13,18 @@ spring:
       group-id: rate-limiter-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    # 配置 Kafka Streams 参数
+    streams:
+      application-id: rate-limiter-streams
+      bootstrap-servers: localhost:9092
+      properties:
+        default:
+          key:
+            serde: org.apache.kafka.common.serialization.Serde$StringSerde
+          value:
+            serde: org.apache.kafka.common.serialization.Serde$StringSerde
+        processing:
+          guarantee: exactly_once
 
 limit-config:
   groups:

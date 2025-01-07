@@ -56,14 +56,10 @@ public class RateLimitService {
         String groupName = apiToGroupMap.get(apiPath);
         // 生成分钟级key
         String minuteKey = generateMinuteKey(userId, groupName);
-        Long currentCount = redisTemplate.opsForValue().increment(minuteKey, 1);
-        if (currentCount == null) {
-            return false;
-        }
-        if (currentCount == 1) {
-            // 第一次设置过期时间为 60 秒
-            redisTemplate.expire(minuteKey, 60, TimeUnit.SECONDS);
-        }
+
+        // 从 Redis读取当前计数
+        String countStr = redisTemplate.opsForValue().get(minuteKey);
+        long currentCount = countStr != null ? Long.parseLong(countStr) : 0L;
 
         // 找到这个用户对应这个组的阈值
         int threshold = getThreshold(userId, groupName);
@@ -90,6 +86,6 @@ public class RateLimitService {
     }
 
     public String getGroupName(String apiPath) {
-        return apiToGroupMap.get(apiPath);
+        return apiToGroupMap.getOrDefault(apiPath, "defaultGroup");
     }
 }
