@@ -42,7 +42,7 @@ public class RateLimiterStreams {
                     try {
                         return objectMapper.readValue(value, ApiRequestProducer.ApiRequestEvent.class);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.severe("Failed to deserialize value: " + e.getMessage() + " , value = " + value);
                         return null;
                     }
                 })

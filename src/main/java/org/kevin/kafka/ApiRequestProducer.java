@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class ApiRequestProducer {
+    private static final Logger logger = Logger.getLogger(ApiRequestProducer.class.toString());
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final String TOPIC = "api_requests";
@@ -35,7 +38,8 @@ public class ApiRequestProducer {
             kafkaTemplate.send(TOPIC, userId, message);
         } catch (JsonProcessingException e) {
             // process exception
-            e.printStackTrace();
+            logger.severe("Failed to serialize ApiRequestEvent: " + e.getMessage());
+            throw new RuntimeException("Failed to serialize ApiRequestEvent", e);
         }
     }
 
