@@ -88,4 +88,8 @@ public class RateLimitService {
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
         return String.format("rate_limit:%s:%s:%s", userId, groupName, time);
     }
+
+    public String getGroupName(String apiPath) {
+        return apiToGroupMap.get(apiPath);
+    }
 }
