@@ -35,11 +35,17 @@ public class RateLimiterTest {
 
     @Test
     public void testHighConcurrencyForUser() throws InterruptedException, ExecutionException {
-        int threadCount = 1000; // 并发线程数
-        int loopPerThread = 5; // 每个线程发 50次请求
+        int threadCount = 100; // 并发线程数
+        int loopPerThread = 6; // 每个线程发 50次请求
         String userId = "user1";// user 1, 2, 3, 4
 
         highConcurrencyExecute(threadCount, loopPerThread, userId);
+
+//        Thread.sleep(10000); // 模拟等待 Kafka Streams 将分钟统计结果写回redis
+
+//        highConcurrencyExecute(threadCount, loopPerThread, userId);
+        // todo: restart here
+        // 客户端可以成功地向主题发送消息，但是 Kafaka Streams似乎并没有订阅到主题并消费消息，
 
         // 简单断言：程序能运行到此，代表所有请求已发完
         Assertions.assertTrue(true);

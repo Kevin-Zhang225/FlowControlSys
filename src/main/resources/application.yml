@@ -6,23 +6,23 @@ spring:
     host: localhost
   kafka:
     bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: rate-limiter-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    consumer:
+#      group-id: rate-limiter-group
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     # 配置 Kafka Streams 参数
     streams:
-      application-id: rate-limiter-streams
+      application-id: rate-limiter-kafka-streams
       bootstrap-servers: localhost:9092
       properties:
         default:
           key:
-            serde: org.apache.kafka.common.serialization.Serde$StringSerde
+            serde: org.apache.kafka.common.serialization.Serdes$StringSerde
           value:
-            serde: org.apache.kafka.common.serialization.Serde$StringSerde
+            serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         processing:
           guarantee: exactly_once
 
@@ -34,7 +34,6 @@ limit-config:
         - "/api/getData"
         - "/api/postData"
         - "/api/putData"
-
   # thresholds: 针对每个user，定义他在每个group下的阈值
   thresholds:
     user1:
@@ -43,3 +42,8 @@ limit-config:
       groupA: 5000
     user3:
       groupA: 10000
+
+logging:
+  level:
+    org.apache.kafka.streams: DEBUG
+    org.kevin.kafka.streams.RateLimiterStreams: DEBUG

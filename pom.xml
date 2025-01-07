@@ -43,14 +43,14 @@
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
-      <version>2.9.9</version>
+      <version>2.9.13</version>
     </dependency>
 
     <!-- Kafka Streams -->
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-streams</artifactId>
-      <version>3.3.1</version>
+      <version>3.2.3</version>
     </dependency>
 
     <!-- JSON 处理（用于序列化/反序列化） -->
